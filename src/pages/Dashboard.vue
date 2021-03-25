@@ -80,7 +80,7 @@
           <q-card-section class="q-pa-none">
             <IEcharts
               :style="{ height: chartHeight }"
-              :option="getSalesOptions"
+              :option="distanceFuelData"
               :resizable="true"
             />
           </q-card-section>
@@ -93,6 +93,7 @@
           </q-card-section>
           <q-card-section class="q-pa-none">
             <IEcharts
+              :loading="isLoading1"
               :style="{ height: chartHeight }"
               :option="LineChart2"
               :resizable="true"
@@ -185,58 +186,24 @@ export default {
     this.year = today.getFullYear()
     this.month = today.getMonth() + 1
     this.day = today.getDate()
+    debugger
+    today.setHours(0, 0, 0, 0)
+    let yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() -1)
+    this.monthYesterday = yesterday.getMonth() +1 
+    this.dayYesterday = yesterday.getDate()
+    let tomorrow = new Date(today)
+    tomorrow.setDate(today.getDate() + 1)
+    let last7 = new Date(tomorrow)
+    last7.setDate(last7.getDate() - 7)
+    this.initTimestamp = last7.getTime()
+    this.endTimestamp = tomorrow.getTime()
+
     this.dashboardApi = new DashboardApi(this.url, this.token)
     this.loadData()
   },
   computed: {
     ...mapGetters(["url", "token"]),
-    getSalesOptions() {
-      return {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            // Coordinate axis indicator, coordinate axis trigger is valid
-            type: 'shadow', // The default is a straight line, optional:'line' |'shadow'
-          },
-        },
-
-        grid: {
-          left: '2%',
-          right: '2%',
-          top: '4%',
-          bottom: '3%',
-          containLabel: true,
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: ['Ayer', 'Hoy'],
-          },
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            splitLine: {
-              show: false,
-            },
-          },
-        ],
-        series: [
-          {
-            name: 'Distancia',
-            type: 'bar',
-            data: [140, 45],
-            color: '#546bfa',
-          },
-          {
-            name: 'Consumo',
-            type: 'bar',
-            data: [54, 10],
-            color: '#f88c2b',
-          },
-        ],
-      }
-    },
     getPieOptions() {
       return {
         tooltip: {
@@ -310,9 +277,15 @@ export default {
         width: 0,
         height: 0,
       },
+      initTimestamp: 0,
+      endTimestamp: 0,
+      isLoading: false,
+      isLoading1: false,
       year: 2000,
       month: 1,
       day: 1,
+      monthYesterday: 1,
+      dayYesterday: 1,
       counter: {
           movement: 0,
           idle: 0,
@@ -333,6 +306,51 @@ export default {
           data: [53, 32, 33, 52, 13, 44, 32],
         },
       ],
+      distanceFuelData: {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            // Coordinate axis indicator, coordinate axis trigger is valid
+            type: 'shadow', // The default is a straight line, optional:'line' |'shadow'
+          },
+        },
+
+        grid: {
+          left: '2%',
+          right: '2%',
+          top: '4%',
+          bottom: '3%',
+          containLabel: true,
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: ['Ayer', 'Hoy'],
+          },
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            splitLine: {
+              show: false,
+            },
+          },
+        ],
+        series: [
+          {
+            name: 'Distancia',
+            type: 'bar',
+            data: [140, 45],
+            color: '#546bfa',
+          },
+          {
+            name: 'Consumo',
+            type: 'bar',
+            data: [54, 10],
+            color: '#f88c2b',
+          },
+        ],
+      },
       chartOptions: {
         chart: {
           type: 'bar',
@@ -962,19 +980,44 @@ export default {
     async loadData() {
       try {
         this.isLoading = true
+        this.isLoading1 = true
         let vehiclesStateResponse = await this.dashboardApi.vehiclesState()
-        console.log(vehiclesStateResponse)
         this.counter.movement = vehiclesStateResponse.data.data.entries.movement
         this.counter.idle = vehiclesStateResponse.data.data.entries.idle
         this.counter.stopped = vehiclesStateResponse.data.data.entries.stopped
         this.counter.disconnected = vehiclesStateResponse.data.data.entries.disconnected
-
         let summaryMonthResponse = await this.dashboardApi.summaryMonth(this.year, this.month)
-        console.log(summaryMonthResponse)
-        summaryMonthResponse.data.data.forEach( element => {
-
+        // console.log(summaryMonthResponse)
+        // summaryMonthResponse.data.data.forEach( element => {
+        // })
+        let summaryLast = await this.dashboardApi.summaryRange(this.initTimestamp, this.endTimestamp)
+        let summaryLastData = {}
+        summaryLast.data.data.forEach( element => {
+            if (summaryLastData[[element.month, element.day]] === undefined) {
+               summaryLastData[[element.month, element.day]] = {
+                   distance: element.distance,
+                   consumption: element.consumption,
+                   movement: element.movement,
+               } 
+            } else {
+                summaryLastData[[element.month, element.day]].distance += element.distance
+                summaryLastData[[element.month, element.day]].consumption += element.consumption
+                summaryLastData[[element.month, element.day]].movement += element.movement
+            }
         })
+        console.log(summaryLastData)
+        console.log(this.monthYesterday)
+        console.log(this.dayYesterday)
         debugger
+        let distanceYesterday = summaryLastData[[this.monthYesterday, this.dayYesterday]].distance
+        let distanceToday = summaryLastData[[this.month, this.day]].distance
+        let consumptionYesterday = summaryLastData[[this.monthYesterday, this.dayYesterday]].consumption
+        let consumptionToday = summaryLastData[[this.month, this.day]].consumption
+        this.distanceFuelData.series[0].data = [distanceYesterday, distanceToday]
+        this.distanceFuelData.series[1].data = [consumptionYesterday, consumptionToday]
+        this.isLoading1 = false
+
+
         this.isLoading = false
       } catch (err) {
         this.isLoading = false

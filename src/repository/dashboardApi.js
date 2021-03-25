@@ -21,7 +21,27 @@ export default class DashboardApi {
           }
         })
         .catch(response => {
-          console.error("Error en loginApi - login");
+          console.error("Error en dashboardApi - summaryMonth");
+          reject(new Error("server-error"));
+        })
+    })
+  }
+
+  summaryRange(initTimestamp, endTimestamp) {
+    const apiURL = this.url + "/dashboard/report/summary/range"
+    return new Promise((resolve, reject) => {
+      axios.defaults.headers.common["Authorization"] = "bearer " + this.token
+      axios
+        .post(apiURL, {'timestamp_init': initTimestamp, 'timestamp_end': endTimestamp}, { timeout: 40000 })
+        .then(response => {
+          if (response.status === 200) {
+            resolve(response);
+          } else {
+            reject(new Error("api-error"));
+          }
+        })
+        .catch(response => {
+          console.error("Error en dashboardApi - summaryRange");
           reject(new Error("server-error"));
         })
     })
@@ -41,7 +61,7 @@ export default class DashboardApi {
           }
         })
         .catch(response => {
-          console.error("Error en loginApi - login");
+          console.error("Error en dashboardApi - vehiclesState");
           reject(new Error("server-error"));
         })
     })
