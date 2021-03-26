@@ -47,6 +47,26 @@ export default class DashboardApi {
     })
   }
 
+  driverRange(initTimestamp, endTimestamp) {
+    const apiURL = this.url + "/dashboard/report/driver"
+    return new Promise((resolve, reject) => {
+      axios.defaults.headers.common["Authorization"] = "bearer " + this.token
+      axios
+        .post(apiURL, {'timestamp_init': initTimestamp, 'timestamp_end': endTimestamp}, { timeout: 40000 })
+        .then(response => {
+          if (response.status === 200) {
+            resolve(response);
+          } else {
+            reject(new Error("api-error"));
+          }
+        })
+        .catch(response => {
+          console.error("Error en dashboardApi - driverRange");
+          reject(new Error("server-error"));
+        })
+    })
+  }
+
   vehiclesState() {
     const apiURL = this.url + "/dashboard/vehicles/state"
     return new Promise((resolve, reject) => {

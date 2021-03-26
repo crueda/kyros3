@@ -75,7 +75,7 @@ module.exports = function (ctx) {
       showProgress: true,
       // gzip: false,
       analyze: false,
-      publicPath: ctx.dev ? '/' : 'https://indoor-uwb.kyroslbs.com',
+      publicPath: ctx.dev ? '/' : 'https://web-demos.kyroslbs.com/prueba',
       // vueCompiler: true,
       gzip: true,
       // Options below are automatically set depending on the env, set them if you want to override

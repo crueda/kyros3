@@ -79,6 +79,7 @@
           </q-card-section>
           <q-card-section class="q-pa-none">
             <IEcharts
+              :loading="isLoadingDistanceFuel"
               :style="{ height: chartHeight }"
               :option="distanceFuelData"
               :resizable="true"
@@ -89,13 +90,13 @@
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <q-card class="q-ma-xs" style="background-color: #ffffff">
           <q-card-section class="text-h6 text-black">
-            Distancia semanal
+            Distancia y consumo 7 días
           </q-card-section>
           <q-card-section class="q-pa-none">
             <IEcharts
-              :loading="isLoading1"
+              :loading="isLoadingDistanceWeek"
               :style="{ height: chartHeight }"
-              :option="LineChart2"
+              :option="distaceWeekData"
               :resizable="true"
             />
           </q-card-section>
@@ -125,6 +126,7 @@
           </q-card-section>
           <q-card-section class="q-pa-none">
             <IEcharts
+              :loading="isLoadingFleetFuel"
               :style="{ height: chartHeight }"
               :option="BarChart"
               :resizable="true"
@@ -135,10 +137,11 @@
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <q-card class="q-ma-xs" style="background-color: #dceaf5">
           <q-card-section class="text-h6 text-black">
-            Infracciones semanal
+            Infracciones 7 días
           </q-card-section>
           <q-card-section class="q-pa-none">
             <IEcharts
+              :loading="isLoadingDistanceWeek"
               :style="{ height: chartHeight }"
               :option="LineChart3"
               :resizable="true"
@@ -149,10 +152,11 @@
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <q-card class="q-ma-xs" style="background-color: #638f35">
           <q-card-section class="text-h6 text-white">
-            Actividad semanal por conductor
+            Actividad por conductor 7 días
           </q-card-section>
           <q-card-section class="q-pa-none">
             <IEcharts
+              :loading="isLoadingDriverWeek"
               :style="{ height: chartHeight }"
               :option="LineChartDrivers"
               :resizable="true"
@@ -186,7 +190,6 @@ export default {
     this.year = today.getFullYear()
     this.month = today.getMonth() + 1
     this.day = today.getDate()
-    debugger
     today.setHours(0, 0, 0, 0)
     let yesterday = new Date(today)
     yesterday.setDate(yesterday.getDate() -1)
@@ -281,6 +284,10 @@ export default {
       endTimestamp: 0,
       isLoading: false,
       isLoading1: false,
+      isLoadingDistanceFuel: false,
+      isLoadingDistanceWeek: false,
+      isLoadingFleetFuel: false,
+      isLoadingDriverWeek: false,
       year: 2000,
       month: 1,
       day: 1,
@@ -298,14 +305,6 @@ export default {
       tab: 'contact',
       layout: 'dense',
       side: 'right',
-      series: [
-        {
-          data: [44, 55, 41, 64, 22, 43, 21],
-        },
-        {
-          data: [53, 32, 33, 52, 13, 44, 32],
-        },
-      ],
       distanceFuelData: {
         tooltip: {
           trigger: 'axis',
@@ -340,13 +339,13 @@ export default {
           {
             name: 'Distancia',
             type: 'bar',
-            data: [140, 45],
+            data: [0, 0],
             color: '#546bfa',
           },
           {
             name: 'Consumo',
             type: 'bar',
-            data: [54, 10],
+            data: [0, 0],
             color: '#f88c2b',
           },
         ],
@@ -437,125 +436,9 @@ export default {
         ],
         dataset: {
           source: [
-            { label: '0D', max: 500, sales: 490 },
-            {
-              label: '1D',
-              max: 500,
-              sales: 472,
-            },
-            { label: '2D', max: 500, sales: 450 },
-            {
-              label: '3D',
-              max: 500,
-              sales: 424,
-            },
-            { label: '4D', max: 500, sales: 400 },
-            {
-              label: '5D',
-              max: 500,
-              sales: 330,
-            },
-            { label: '6D', max: 500, sales: 200 },
-            {
-              label: '7D',
-              max: 500,
-              sales: 123,
-            },
-            { label: '16D', max: 500, sales: 100 },
-            {
-              label: '17D',
-              max: 500,
-              sales: 53,
-            },
-            { label: '18D', max: 500, sales: 25 },
-            { label: '19D', max: 500, sales: 10 },
+            
           ],
         },
-      },
-      LineChart: {
-        tooltip: { show: true },
-        title: {
-          show: true,
-          textStyle: { color: 'rgba(0, 0, 0 , .87)', fontFamily: 'sans-serif' },
-        },
-        grid: { containLabel: true, left: '0', bottom: '0', right: '0' },
-        xAxis: {
-          show: false,
-          type: 'category',
-          axisLine: {
-            lineStyle: { color: 'rgba(0, 0, 0 , .54)', type: 'dashed' },
-          },
-          axisTick: {
-            show: true,
-            alignWithLabel: true,
-            lineStyle: {
-              show: true,
-              color: 'rgba(0, 0, 0 , .54)',
-              type: 'dashed',
-            },
-          },
-          axisLabel: { show: false },
-          boundaryGap: false,
-        },
-        yAxis: {
-          show: false,
-          type: 'value',
-          axisLine: {
-            lineStyle: { color: 'rgba(0, 0, 0 , .54)', type: 'dashed' },
-          },
-          axisLabel: { show: false },
-          splitLine: { lineStyle: { type: 'dashed' } },
-          axisTick: {
-            show: true,
-            lineStyle: {
-              show: true,
-              color: 'rgba(0, 0, 0 , .54)',
-              type: 'dashed',
-            },
-          },
-        },
-        series: [{ type: 'line', areaStyle: {}, smooth: true }],
-        dataset: {
-          source: [
-            { month: 'Jan', 'Unique Visit': 296, 'Page View': 548 },
-            {
-              month: 'Feb',
-              'Unique Visit': 1181,
-              'Page View': 714,
-            },
-            { month: 'Mar', 'Unique Visit': 235, 'Page View': 961 },
-            {
-              month: 'Apr',
-              'Unique Visit': 294,
-              'Page View': 580,
-            },
-            { month: 'May', 'Unique Visit': 765, 'Page View': 730 },
-            {
-              month: 'Jun',
-              'Unique Visit': 412,
-              'Page View': 1249,
-            },
-            { month: 'Jul', 'Unique Visit': 1125, 'Page View': 267 },
-            {
-              month: 'Aug',
-              'Unique Visit': 800,
-              'Page View': 251,
-            },
-            { month: 'Sep', 'Unique Visit': 948, 'Page View': 1043 },
-            {
-              month: 'Oct',
-              'Unique Visit': 1046,
-              'Page View': 1118,
-            },
-            { month: 'Nov', 'Unique Visit': 363, 'Page View': 573 },
-            {
-              month: 'Dec',
-              'Unique Visit': 909,
-              'Page View': 283,
-            },
-          ],
-        },
-        color: ['#2196f3'],
       },
       LineChartDrivers: {
         tooltip: { show: true },
@@ -599,102 +482,13 @@ export default {
             },
           },
         },
-        series: [
-          {
-            type: 'line',
-            lineStyle: {
-              color: '#F88C2B',
-            },
-            smooth: true,
-          },
-          {
-            type: 'line',
-            lineStyle: {
-              color: '#546BFA',
-            },
-            smooth: true,
-          },
-          {
-            type: 'line',
-            lineStyle: {
-              color: '#7BD4D5',
-            },
-            smooth: true,
-          },
-        ],
+        series: [],
         dataset: {
-          source: [
-            {
-              month: 'Feb',
-              'Unique Visit': 1181,
-              'Page View': 714,
-              Driver3: 100,
-            },
-            {
-              month: 'Mar',
-              'Unique Visit': 235,
-              'Page View': 961,
-              Driver3: 150,
-            },
-            {
-              month: 'Apr',
-              'Unique Visit': 294,
-              'Page View': 580,
-              Driver3: 100,
-            },
-            {
-              month: 'May',
-              'Unique Visit': 765,
-              'Page View': 730,
-              Driver3: 700,
-            },
-            {
-              month: 'Jun',
-              'Unique Visit': 412,
-              'Page View': 1249,
-              Driver3: 100,
-            },
-            {
-              month: 'Jul',
-              'Unique Visit': 1125,
-              'Page View': 267,
-              Driver3: 500,
-            },
-            {
-              month: 'Aug',
-              'Unique Visit': 800,
-              'Page View': 251,
-              Driver3: 10,
-            },
-            {
-              month: 'Sep',
-              'Unique Visit': 948,
-              'Page View': 1043,
-              Driver3: 100,
-            },
-            {
-              month: 'Oct',
-              'Unique Visit': 1046,
-              'Page View': 1118,
-              Driver3: 160,
-            },
-            {
-              month: 'Nov',
-              'Unique Visit': 363,
-              'Page View': 573,
-              Driver3: 100,
-            },
-            {
-              month: 'Dec',
-              'Unique Visit': 909,
-              'Page View': 283,
-              Driver3: 120,
-            },
-          ],
+          source: [{ day: '' },{ day: '' },{ day: '' },{ day: '' },{ day: '' },{ day: '' }],
         },
         color: ['#7BD4D5'],
       },
-      LineChart2: {
+      distaceWeekData: {
         tooltip: { show: true },
         title: {
           show: true,
@@ -736,45 +530,13 @@ export default {
             },
           },
         },
-        series: [{ type: 'line', areaStyle: {}, smooth: false }],
+        series: [{ type: 'line', areaStyle: {
+          color: '#546BFA'
+        }, smooth: true }, { type: 'line', areaStyle: {
+          color: '#F78C2C'
+        }, smooth: true }],
         dataset: {
-          source: [
-            { month: 'Jan', 'Unique Visit': 296, 'Page View': 548 },
-            {
-              month: 'Feb',
-              'Unique Visit': 1181,
-              'Page View': 714,
-            },
-            { month: 'Mar', 'Unique Visit': 235, 'Page View': 961 },
-            {
-              month: 'Apr',
-              'Unique Visit': 294,
-              'Page View': 580,
-            },
-            { month: 'May', 'Unique Visit': 765, 'Page View': 730 },
-            {
-              month: 'Jun',
-              'Unique Visit': 412,
-              'Page View': 1249,
-            },
-            { month: 'Jul', 'Unique Visit': 1125, 'Page View': 267 },
-            {
-              month: 'Aug',
-              'Unique Visit': 800,
-              'Page View': 251,
-            },
-            { month: 'Sep', 'Unique Visit': 948, 'Page View': 1043 },
-            {
-              month: 'Oct',
-              'Unique Visit': 1046,
-              'Page View': 1118,
-            },
-            { month: 'Nov', 'Unique Visit': 363, 'Page View': 573 },
-            {
-              month: 'Dec',
-              'Unique Visit': 909,
-              'Page View': 283,
-            },
+          source: [            
           ],
         },
         color: ['#45c2c5'],
@@ -824,42 +586,6 @@ export default {
         series: [{ type: 'line', areaStyle: {}, smooth: false }],
         dataset: {
           source: [
-            { month: 'Jan', 'Unique Visit': 296, 'Page View': 548 },
-            {
-              month: 'Feb',
-              'Unique Visit': 1181,
-              'Page View': 714,
-            },
-            { month: 'Mar', 'Unique Visit': 235, 'Page View': 961 },
-            {
-              month: 'Apr',
-              'Unique Visit': 294,
-              'Page View': 580,
-            },
-            { month: 'May', 'Unique Visit': 765, 'Page View': 730 },
-            {
-              month: 'Jun',
-              'Unique Visit': 412,
-              'Page View': 1249,
-            },
-            { month: 'Jul', 'Unique Visit': 1125, 'Page View': 267 },
-            {
-              month: 'Aug',
-              'Unique Visit': 800,
-              'Page View': 251,
-            },
-            { month: 'Sep', 'Unique Visit': 948, 'Page View': 1043 },
-            {
-              month: 'Oct',
-              'Unique Visit': 1046,
-              'Page View': 1118,
-            },
-            { month: 'Nov', 'Unique Visit': 363, 'Page View': 573 },
-            {
-              month: 'Dec',
-              'Unique Visit': 909,
-              'Page View': 283,
-            },
           ],
         },
         color: ['#EA4B64'],
@@ -895,80 +621,6 @@ export default {
           },
         ],
       },
-      messages: [
-        {
-          id: 5,
-          name: 'Pratik Patel',
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            '            weekend. Do you want to grab brunch?',
-          avatar: 'https://avatars2.githubusercontent.com/u/34883558?s=400&v=4',
-          time: '10:42 PM',
-        },
-        {
-          id: 6,
-          name: 'Winfield Stapforth',
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            '            weekend. Do you want to grab brunch?',
-          avatar: 'https://cdn.quasar.dev/img/avatar6.jpg',
-          time: '11:17 AM',
-        },
-        {
-          id: 1,
-          name: 'Boy',
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            '            weekend. Do you want to grab brunch?',
-          avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
-          time: '5:17 AM',
-        },
-        {
-          id: 2,
-          name: 'Jeff Galbraith',
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            '            weekend. Do you want to grab brunch?',
-          avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-          time: '5:17 AM',
-        },
-        {
-          id: 3,
-          name: 'Razvan Stoenescu',
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            '            weekend. Do you want to grab brunch?',
-          avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
-          time: '5:17 AM',
-        },
-      ],
-      contacts: [
-        {
-          name: 'Pratik Patel',
-          position: 'Developer',
-          avatar: 'https://avatars2.githubusercontent.com/u/34883558?s=400&v=4',
-        },
-        {
-          name: 'Razvan Stoenescu',
-          position: 'Developer',
-          avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
-        },
-        {
-          name: 'Jeff Galbraith',
-          position: 'Developer',
-          avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-        },
-        {
-          name: 'Brunhilde Panswick',
-          position: 'Administrator',
-          avatar: 'https://cdn.quasar.dev/img/avatar2.jpg',
-        },
-        {
-          name: 'Winfield Stapforth',
-          position: 'Administrator',
-          avatar: 'https://cdn.quasar.dev/img/avatar6.jpg',
-        },
-      ],
     }
   },
   methods: {
@@ -980,16 +632,41 @@ export default {
     async loadData() {
       try {
         this.isLoading = true
-        this.isLoading1 = true
         let vehiclesStateResponse = await this.dashboardApi.vehiclesState()
         this.counter.movement = vehiclesStateResponse.data.data.entries.movement
         this.counter.idle = vehiclesStateResponse.data.data.entries.idle
         this.counter.stopped = vehiclesStateResponse.data.data.entries.stopped
         this.counter.disconnected = vehiclesStateResponse.data.data.entries.disconnected
         let summaryMonthResponse = await this.dashboardApi.summaryMonth(this.year, this.month)
-        // console.log(summaryMonthResponse)
-        // summaryMonthResponse.data.data.forEach( element => {
-        // })
+        let summaryFleetData = {}
+        summaryMonthResponse.data.data.forEach( element => {
+          for (let key in element.fleet_data) {
+            if (element.fleet_data[key].distance !== undefined) {
+              if (summaryFleetData[key] === undefined) {
+                summaryFleetData[key] = { ...element.fleet_data[key] }
+              } else {
+                summaryFleetData[key].distance += element.fleet_data[key].distance
+              }
+            }
+          }
+        })
+        let fleetMaxDistance = 0
+        for (let fleetId in summaryFleetData) {
+          if (summaryFleetData[fleetId].distance > fleetMaxDistance) {
+            fleetMaxDistance = summaryFleetData[fleetId].distance
+          }
+        }
+        let arrSummaryFleetData = []
+        for (let fleetId in summaryFleetData) {
+          arrSummaryFleetData.push({ label: fleetId, max: fleetMaxDistance, distance: summaryFleetData[fleetId].distance })
+        }
+        arrSummaryFleetData.sort((a, b) => (a.distance < b.distance) ? 1 : -1)
+        arrSummaryFleetData.forEach (el => {
+          this.BarChart.dataset.source.push( {label: el.label, max: el.max.toFixed(2), distance: el.distance.toFixed(2)} )
+        })
+
+        this.isLoadingDistanceFuel = true        
+        this.isLoadingDistanceWeek = true
         let summaryLast = await this.dashboardApi.summaryRange(this.initTimestamp, this.endTimestamp)
         let summaryLastData = {}
         summaryLast.data.data.forEach( element => {
@@ -998,25 +675,110 @@ export default {
                    distance: element.distance,
                    consumption: element.consumption,
                    movement: element.movement,
+                   events: 0,
                } 
             } else {
                 summaryLastData[[element.month, element.day]].distance += element.distance
                 summaryLastData[[element.month, element.day]].consumption += element.consumption
                 summaryLastData[[element.month, element.day]].movement += element.movement
+                if (element.driving_events.harsh_acceleration !== undefined) {
+                  summaryLastData[[element.month, element.day]].events += element.driving_events.harsh_acceleration
+                }
+                if (element.driving_events.max_speed !== undefined) {
+                  summaryLastData[[element.month, element.day]].events += element.driving_events.max_speed
+                }
+                if (element.driving_events.harsh_braking !== undefined) {
+                  summaryLastData[[element.month, element.day]].events += element.driving_events.harsh_braking
+                }
+                if (element.driving_events.harsh_cornering !== undefined) {
+                  summaryLastData[[element.month, element.day]].events += element.driving_events.harsh_cornering
+                }
             }
         })
-        console.log(summaryLastData)
-        console.log(this.monthYesterday)
-        console.log(this.dayYesterday)
-        debugger
+        this.isLoadingDistanceFuel = false
+        this.isLoadingDistanceWeek = false
         let distanceYesterday = summaryLastData[[this.monthYesterday, this.dayYesterday]].distance
-        let distanceToday = summaryLastData[[this.month, this.day]].distance
+        let distanceToday = 0
+        let consumptionToday = 0
+        try {
+          distanceToday = summaryLastData[[this.month, this.day]].distance
+          consumptionToday = summaryLastData[[this.month, this.day]].consumption
+        } catch(e) {}
         let consumptionYesterday = summaryLastData[[this.monthYesterday, this.dayYesterday]].consumption
-        let consumptionToday = summaryLastData[[this.month, this.day]].consumption
         this.distanceFuelData.series[0].data = [distanceYesterday, distanceToday]
         this.distanceFuelData.series[1].data = [consumptionYesterday, consumptionToday]
-        this.isLoading1 = false
 
+        let today = new Date()
+        for (let i=7; i>1; i--) {
+          let actualDate = new Date(today)
+          actualDate.setDate(actualDate.getDate() - i +1 )
+          let actualMonth = actualDate.getMonth() + 1
+          let actualDay = actualDate.getDate()
+          let actualDistance = 0
+          let actualConsumption = 0
+          let actualEvents = 0
+          try {
+            actualDistance = summaryLastData[[actualMonth, actualDay]].distance.toFixed(2)
+            actualConsumption = summaryLastData[[actualMonth, actualDay]].consumption.toFixed(2)
+            actualEvents = summaryLastData[[actualMonth, actualDay]].events.toFixed(0)
+          } catch (e) {}
+          this.distaceWeekData.dataset.source.push( { day: 'Día ' + actualDay, 'Distancia': actualDistance, 'Consumo': actualConsumption })
+          this.LineChart3.dataset.source.push( { day: 'Día ' + actualDay, 'Eventos': actualEvents })
+        }
+
+        // this.isLoading1 = false
+
+
+        this.isLoadingDriverWeek = true
+        let driverLast = await this.dashboardApi.driverRange(this.initTimestamp, this.endTimestamp)
+        let driverLastData = {}
+        driverLast.data.data.forEach( element => {
+          let driverName = element.driver_additional_info.driver_name
+          if (driverLastData[driverName] === undefined) {
+            driverLastData[driverName] = {}
+          }
+          if (driverLastData[driverName][[element.month, element.day]] === undefined) {
+              driverLastData[driverName][[element.month, element.day]] = {
+                  distance: element.distance,
+                  consumption: element.consumption,
+                  movement: element.movement,
+              } 
+          } else {
+            driverLastData[driverName][[element.month, element.day]].distance += element.distance
+            driverLastData[driverName][[element.month, element.day]].consumption += element.consumption
+            driverLastData[driverName][[element.month, element.day]].movement += element.movement            
+          }
+        })        
+        let colors = ['#1f00ab', '#a80000', '#b5b52b', '#db1ddb', '#32ed54','#fcfcc7','#999933','#882255','#661100','#6699CC','#888888']
+        let index = 0
+        for (let driver in driverLastData) {
+          if (index < 6) {
+            this.LineChartDrivers.series.push({
+              type: 'line',
+              lineStyle: {
+                color: colors[index],
+              },
+              smooth: true,
+            })
+          }
+          index += 1
+          for (let i=7; i>1; i--) {
+            let actualDate = new Date(today)
+            actualDate.setDate(actualDate.getDate() - i +1 )
+            let actualMonth = actualDate.getMonth() + 1
+            let actualDay = actualDate.getDate()
+            let actualDistance = 0
+            try {
+              actualDistance = driverLastData[driver][[actualMonth, actualDay]].distance.toFixed(2)
+            } catch (e) {}
+            if (index < 6) {
+              this.LineChartDrivers.dataset.source[7-i].day = 'Día ' + actualDay
+              this.LineChartDrivers.dataset.source[7-i][driver] = actualDistance
+            }
+          }          
+        }
+
+        this.isLoadingDriverWeek = false
 
         this.isLoading = false
       } catch (err) {
