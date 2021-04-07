@@ -1,11 +1,11 @@
 {
   "name": "quasar-admin",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
+  "description": "Kyros",
   "productName": "Kyros",
   "cordovaId": "org.cordova.quasar.app",
   "capacitorId": "",
-  "author": "pratikpatelpp802@gmail.com",
+  "author": "carlos.rueda@elecnor.es",
   "private": true,
   "scripts": {
     "test": "echo \"No test specified\" && exit 0"
@@ -16,6 +16,7 @@
     "axios": "^0.18.1",
     "dayjs": "^1.10.4",
     "echarts": "^4.6.0",
+    "firebase": "^8.3.2",
     "quasar": "^1.0.0",
     "vue-apexcharts": "^1.5.2",
     "vue-echarts-v3": "^2.0.1",
@@ -29,7 +30,11 @@
   "devDependencies": {
     "@quasar/app": "^1.0.0",
     "@quasar/quasar-app-extension-qcalendar": "^1.5.6",
-    "quasar-app-extension-qhierarchy": "0.0.1"
+    "@tailwindcss/postcss7-compat": "^2.1.0",
+    "autoprefixer": "^9.8.6",
+    "postcss": "^7.0.35",
+    "quasar-app-extension-qhierarchy": "0.0.1",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0"
   },
   "engines": {
     "node": ">= 10.18.1",
